@@ -2,7 +2,6 @@ import scipy.signal as signal
 from scipy import ndimage
 import numpy as np
 import matplotlib.pyplot as plt
-from openWAVfile import open_wav
 import hashlib
 
 
@@ -66,7 +65,7 @@ def fingerprint(time, data, fs, window_size=DEFAULT_WINDOW_SIZE, overlap=DEFAULT
     # TODO create a hash value for each time chunk. Will be based on the frequency and time indexes
 
     # initialize the array of hashes
-    hashes = np.zeros((1,2))
+    hashes = np.zeros((2,1))
 
     # loop over all the frequency locations
     for i in range(0, np.size(peak_locs,axis=1)):
@@ -95,7 +94,9 @@ def fingerprint(time, data, fs, window_size=DEFAULT_WINDOW_SIZE, overlap=DEFAULT
                     h = hashlib.sha1(string.encode('utf-8'))#"%s|%s|%s" % (str(freq1), str(freq2), str(delta_t)))
 
                     # generate the hash
-                    hashes = np.append(hashes, (h.hexdigest()[0:FINGERPRINT_REDUCTION], time1))
+                    #hashes = np.append(hashes, ([[h.hexdigest()[0:FINGERPRINT_REDUCTION]], [time1]]))
+                    new_hash = np.array([[h.hexdigest()[0:FINGERPRINT_REDUCTION]],[time1]])
+                    hashes = np.concatenate((hashes,new_hash),1)
 
     print(str(np.max(spec_data)))
     # print(detected_peaks)
@@ -131,11 +132,3 @@ def fingerprint(time, data, fs, window_size=DEFAULT_WINDOW_SIZE, overlap=DEFAULT
 
     return hashes
 
-
-
-# test our functions
-samp_rate, time, data = open_wav('Microwave.wav')
-
-hashbrown = fingerprint(time, data[:,0], samp_rate, show_plots=True)
-
-print('done')
