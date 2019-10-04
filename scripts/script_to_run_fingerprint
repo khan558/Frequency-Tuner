@@ -1,0 +1,36 @@
+#Import fingerprint file
+import fingerprint
+import openWAVfile
+import numpy as np
+
+#import the file
+import os
+
+#print name of script
+#print("Running the script : fingerprint.py....\n")
+
+#load samples into openwavfile
+os.system('python fingerprint.py')
+sr1, time1, data,  = openWAVfile.open_wav('Microwave_Hamzah_1.wav')
+sr2, time2, data2 = openWAVfile.open_wav('Microwave_Hamzah_1.wav')
+
+#return hash values
+hashes1 = fingerprint.fingerprint(time1, data, sr1)
+hashes2 = fingerprint.fingerprint(time2, data2, sr2)
+
+#compare hash values
+
+#length of first hash values
+N_1 = np.shape(hashes1)[1]
+
+#length of second hash values
+N_2 = np.shape(hashes2)[1]
+
+
+#Keep account where any two entres are the same
+num = 0
+for i in range(0,N_1):
+    for j in range(0,N_2):
+        if hashes1[0,i] == hashes2[0,j]:
+            num = num + 1
+print(str(num))
